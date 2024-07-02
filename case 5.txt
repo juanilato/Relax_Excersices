@@ -1,0 +1,31 @@
+/*
+PERS (Personas) = {Cuil, Nombre, Dirección, Local, Tel}
+CCTES (Cuentas Corrientes) = {Nro, Fecha, ImporteInicial, SaldoActual, Cuil1, Cuil2}
+CAHORRO (Cajas de Ahorro) = {Nro, Fecha, ImporteInicial, SaldoActual, Cuil1, Cuil2}
+TRANSAC = {NroTrans, NroCuenta (de cuenta corriente o caja de ahorro), Fecha, Importe, IdTipo, Saldo}
+TIPO_TRANS = {IdTipo, Desc_TIpo}
+*/
+pi PERS.Nombre, PERS.Cuil PERS join Cuil = CCTES.Cuil1 (pi Cuil1 CCTES ∪ pi Cuil2 CCTES ∪ pi Cuil1 CAHORRO ∪ pi Cuil2 CAHORRO)
+
+
+/*Nombre y cuil de todos los clientes del banco.*/
+
+pi PERS.Nombre (PERS join Cuil = CCTES.Cuil1 (pi Cuil1 CCTES ∪ pi Cuil2 CCTES ∪ pi Cuil1 CAHORRO ∪ pi Cuil2 CAHORRO))
+
+/*Nombre de las personas que poseen alguna cuenta corriente o caja de ahorro.*/
+
+pi CCTES.Nro (CCTES join CCTES.Nro = TRANSAC.NroCuenta (sigma Saldo > 0 TRANSAC))
+
+/*Cuentas corrientes que nunca generaron saldos negativos*/
+
+pi PERS.Cuil, PERS.Nombre (PERS join PERS.Cuil = CAHORRO.Cuil1	or PERS.Cuil = CAHORRO.Cuil2 ((CAHORRO union CCTES) join CAHORRO.Nro = TRANSAC.NroCuenta (sigma Saldo > 0 TRANSAC)))
+
+/* Personas (cuil y nombre) que tienen dinero disponible (tienen saldo a favor en alguna cta. corriente y/o en alguna caja de ahorro). */
+
+TRANSAC / (pi IdTipo TRANSAC)
+/*Cuentas corrientes (número y saldo) a las que se les efectuaron todos los tipos de transacción posible.*/
+
+pi Nro CCTES - pi NroCuenta sigma Saldo < 0 TRANSAC
+/*
+Cuentas corrientes que nunca tuvieron en algún momento su saldo en rojo, es decir, con saldo negativo.
+*/

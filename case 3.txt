@@ -1,0 +1,32 @@
+EMPLEADOS join (sigma Codp = 'P22-11' and CantHoras > 10 TRABAJA)
+/*
+Programadores (todos sus datos) que han participado en el proyecto código ‘P22-11’ con más de 10 horas.
+*/
+sigma (Rol = 'analista' or Rol = 'diseñador') and FDesde = date('2023-01-01')TRABAJA
+/*
+Personas (todos sus datos) que han trabajado como analistas y diseñadores en el año 2023, independientemente sea en el mismo proyecto o no.
+*/
+EMPLEADOS join ( pi Cuil EMPLEADOS - pi Cuil TRABAJA)
+/*Personas (todos sus datos) que siempre han participado como líderes de proyectos*/
+
+
+TRABAJA join TRABAJA.Codp = PROYECTOS.Codp (sigma Cliente = 'OSSE' PROYECTOS)
+/*Personas (cuil) que han participado en todos los proyectos desarrollados para ‘OSSE’ (cliente).*/
+
+TRABAJA2 = rho TRABAJA2 TRABAJA
+pi TRABAJA.Cuil (TRABAJA join TRABAJA.Rol != TRABAJA2.Rol and TRABAJA.Codp = TRABAJA2.Codp TRABAJA2)
+
+/*Personas (cuil) que han participado con roles diferentes en el mismo proyecto */
+
+TRABAJA2 = rho TRABAJA2 TRABAJA
+pi TRABAJA.Cuil, PROYECTOS.Lider(PROYECTOS join PROYECTOS.Codp = TRABAJA.Codp (TRABAJA join TRABAJA.Rol != TRABAJA2.Rol and TRABAJA.Codp = TRABAJA2.Codp TRABAJA2))
+
+/*Personas (cuil) que han participado con roles diferentes en el mismo proyecto (considerar los líderes).*/
+
+(pi Cuil sigma Codp = 'P22-05' TRABAJA) ∪ (pi Cuil (rho Cuil ← Lider(sigma Codp='P22-05' PROYECTOS)))
+/*Equipo (cuil y nombre) de trabajo del proyecto ‘P22-05’ (debe incluirse el líder)*/
+
+TRABAJA2 = rho TRABAJA2 TRABAJA
+TRABAJA join TRABAJA.Rol = 'analista' and TRABAJA2.Rol = 'diseñador' and TRABAJA.Codp =TRABAJA2.Codp and TRABAJA.FDesde= date('2023-01-01') TRABAJA2
+/*Personas (todos sus datos) que han trabajado como analistas y diseñadores en el año 2023, en el mismo proyecto.
+*/

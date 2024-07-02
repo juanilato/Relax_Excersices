@@ -1,0 +1,69 @@
+pi Correo, Nom (PERS)
+/*Correo y nombre de todas las personas.*/
+pi Nom (CURSO)
+/*Nombre de los cursos.*/
+σ Ch > 40 CURSO
+/*Cursos (todos los datos) cuya carga horaria sea superior a las 40 horas reloj*/
+σ Ch > 40 and Ch < 43 CURSO
+/*Cursos (todos los datos) cuya carga horaria se encuentre entre 40 y 43 horas reloj.*/
+pi Nom, Tema (ρ nombre_curso←Nom (CURSO) join nombre_curso = Nom TEMAS)
+/*Renombrar el atributo “Nom” dentro de la tabla “Curso” por el atributo “nombre_curso” y obtener el listado de los cursos (nombre) junto a los temas que se imparten.*/
+
+pi Tema (TEMAS join CURSO)
+
+/*Temas que se incluyen en todos los cursos.*/
+
+pi PERS.Correo, PERS.Nom (PERS join PERS.Correo = DICTA.Correo DICTA)
+/*Docentes (correo y nombre) que dictan cursos*/
+
+pi PERS.Correo, PERS.Nom, CURSO.Nom (PERS join PERS.Correo = DICTA.Correo DICTA join DICTA.Nom = CURSO.Nom CURSO)
+/*Listado de los cursos (nombre) junto a los datos del docente que los dicta.*/
+
+
+pi PERS.Correo, PERS.Nom(σ CURSO.Nom = 'Python I' (PERS join PERS.Correo = DICTA.Correo DICTA join DICTA.Nom = CURSO.Nom CURSO))
+
+pi PERS.Correo, PERS.Nom(σ CURSO.Nom = 'Python I' or CURSO.Nom = 'Python II' (PERS join PERS.Correo = DICTA.Correo DICTA join DICTA.Nom = CURSO.Nom CURSO))
+
+
+(pi DICTA.Correo (σ Nom = 'Python II' CURSO join DICTA)) ∩ (pi DICTA.Correo (σ Nom = 'Python I' CURSO join DICTA)) 
+
+/* 
+9. Docentes (todos los datos) que dictan los cursos “Python I”.
+10. Listado de docentes (correo y nombre) que dictan el curso “Python I” y/o “Python II”.
+11. Docentes (todos los datos) que dictan los cursos “Python I” y “Python II”.*/ 
+
+DICTA join DICTA.Correo = INSC.Correo INSC
+/* Docentes (todos los datos) que cursaron algún curso de verano */
+pi PERS.Correo,	PERS.NomU,	PERS.Nom (σ INSC.Nom='Kotlin I' INSC join INSC.Correo = PERS.Correo PERS)
+/* Alumnos (todos los datos) que se inscribieron en el curso “Kotlin I”.*/
+pi PERS.Correo,	PERS.NomU,	PERS.Nom (σ INSC.Nom='Kotlin II' INSC join INSC.Correo = PERS.Correo PERS)
+/*Alumnos (todos los datos) que se inscribieron en el curso “Kotlin II”*/
+(pi Correo σ INSC.Nom='Kotlin II' INSC) ∩ (pi Correo σ INSC.Nom='Kotlin I' INSC)
+/*Listado de alumnos (correo) que se inscribieron tanto en el curso “Kotlin I” como “Kotlin II”.*/
+
+σ Nota≥7 (σ INSC.Nom='Python I' INSC)
+/*Alumnos (todos los datos) que aprobaron el curso “Python I” (se aprueba con nota mayor o igual a 7)*/
+σ Nota≥7 (σ INSC.Nom='Python II' INSC)
+/*Alumnos (todos los datos) que aprobaron el curso “Python II” (se aprueba con nota mayor o igual a 7).*/
+PERS join PERS.Correo = INSC.Correo INSC join ((pi Correo σ Nota≥7 (σ INSC.Nom='Python I' INSC)) ∩  (pi Correo σ Nota≥7 (σ INSC.Nom='Python II' INSC)))
+
+/*Alumnos (todos los datos) que aprobaron el curso “Python I” y “Python II*/
+
+INSC2 = ρ INSC2 INSC
+pi INSC.Correo (INSC join INSC.Correo = INSC2.Correo and INSC.Nom != INSC2.Nom INSC2)
+
+/*Alumnos (Correo) que se inscribieron en más de un curso de verano*/
+
+DICTA2 = ρ DICTA2 DICTA
+PERS join pi DICTA.Correo (σ CURSO.Ch < 30 (CURSO join (DICTA join DICTA.Correo = DICTA2.Correo and DICTA.Nom != DICTA2.Nom DICTA2)))
+
+/*Docentes (todos los datos) que dictan más de un curso cuya carga horaria sea inferior a 30 horas reloj*/
+
+
+INSC2 = ρ INSC2 INSC
+pi INSC.Correo, INSC2.Correo (INSC join INSC.Nom=INSC2.Nom and INSC.Correo != INSC2.Correo INSC2)
+/*Pares de alumnos (correo) que cursaron los mismos cursos*/
+
+INSC2 = ρ INSC2 INSC
+pi INSC.Correo, INSC2.Correo (INSC join INSC.Nom=INSC2.Nom and INSC.Correo != INSC2.Correo and INSC.CorreoD != INSC2.CorreoD INSC2)
+/*Pares de alumnos que cursaron los mismos cursos con distinto profesor.*/

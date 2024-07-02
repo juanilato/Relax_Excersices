@@ -1,0 +1,45 @@
+pi Cod, Inversion (PROY join PROY.Num = EMP.Num (sigma Nombre = 'Techint' EMP))
+/*
+1. Proyectos (código, inversión) desarrollados durante el 2023 en Argentina por la empresa “Techint”.
+*/
+TRA2 = rho TRA2 TRA	
+pi GEO.Cuil (sigma Pais = 'Argentina' GEO join GEO.Cuil = TRA.Cuil (TRA join TRA.Cod != TRA2.Cod and TRA.Cuil = TRA2.Cuil TRA2))
+/*
+2. Geólogos argentinos (todos los datos) que han trabajado en más de una ocasión en el mismo proyecto.
+*/
+GEO2 = rho GEO2 GEO
+GEO join GEO.Cuil = GEO2.Cuil and GEO.Pais = GEO.Paisr GEO2
+
+/*
+3. Geólogos que residen en el país donde nacieron.
+*/
+
+
+pi EMP.Num,EMP.Nombre,EMP.Web ((sigma Pais = 'Argentina' or Pais = 'Chile' GEO join GEO.Cuil = TRA.Cuil TRA) join   TRA.Cod = PROY.Cod (PROY join PROY.Num = EMP.Num EMP))
+/*
+4. Empresas (todos los datos) donde trabajaron geólogos tanto de nacionalidad argentina como chilena.*/
+
+pi PROY.Cod, PROY.Inversion, PROY.Pais (PROY join PROY.Cod = TRA.Cod (sigma Pais != Paisr GEO join GEO.Cuil = TRA.Cuil TRA))
+/*
+5. Proyectos (código, inversión y país) donde trabajaron únicamente extranjeros.*/
+
+RES= (ρ RES (π Num, Cod, Nombre (σ EMP.Nombre='Barrick' (EMP⨝PROY))))
+(π TRA.Cod, TRA.Cuil (TRA⨝ TRA.Cod=RES.Cod RES)) ⨝ GEO
+/*
+6. Geólogos (todos los datos) que trabajaron en todos los proyectos de la empresa “Barrick”.*/
+
+RES= (ρ RES (π Num, Cod, Nombre (σ EMP.Nombre='Techint' (EMP⨝PROY))))
+(π TRA.Cod, TRA.Cuil (TRA⨝ TRA.Cod=RES.Cod RES)) ⨝ (σ GEO.Pais='Argentina' ∨ GEO.Pais='Chile'(GEO))
+/*
+7. Geólogos (todos los datos) argentinos y/o chilenos que trabajaron en proyectos de la empresa “Techint”.
+*/
+
+
+
+pi GEO.Cuil (sigma Pais= 'Chile' or Pais = 'Argentina' GEO join TRA join pi PROY.Cod (PROY join sigma Nombre = 'Techint' EMP)) - pi GEO.Cuil (sigma Pais= 'Chile' or Pais = 'Argentina' GEO join TRA join pi PROY.Cod (PROY join sigma Nombre != 'Techint' EMP))
+
+/*
+8. Geólogos (todos los datos) argentinos y/o chilenos que trabajaron únicamente en proyectos de la empresa
+“Techint”.
+
+

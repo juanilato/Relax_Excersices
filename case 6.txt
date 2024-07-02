@@ -1,0 +1,33 @@
+Editor de grupo
+
+group: grupoTablas
+
+X = {
+P:number, Q:string, R:number
+10, a, 5
+15, b, 8
+25, a, 6
+}
+
+Z = {
+A:number, B:string, C:number
+10, b, 6
+25, c, 3
+10, b, 5
+}
+
+Algebra Relacional
+r = σ A <= 15 (Z)/*De la tabla Z la columna A, *selecciona* los valores son menores o iguales a 15*/
+s = π P,Q (X) /*Proyecta Las columnas P y Q de la tabla X*/
+a = π P (X) /*Proyecta la columna P de la tabla X*/
+b = X ∪ Z /*Realiza la unión de las tablas X y Z*/
+c = Z - X /*Realiza la resta de X sobre la tabla Z*/
+d = π Q (X) - π B (Z) /*Realiza la proyección de Columna Q de X y Columna B de Z y realiza la resta  */
+e = π P X ∩ π A Z /* Interseccion entre las proyecciones de la Columna P de la tabla X y la columna A de la tabla Z (10 y 25)*/
+f = X x Z /*Producto cartesiano entre X y Z */
+g = X ⨝ P=A Z/*Realizacion de join cuando columna P de tabla X=columna A de tabla Z*/
+h = X ⟗ Q = B Z /*Full outher join combina todas las columnas de X y Z y las que posean Q = B las colocará juntas*/
+i =  X ⟖ Q = B Z /*Q = B colocará las filas juntas, y todas las columnas de la tabla de Z con valores de null cuando no coincida.*/
+j = X ⟕ P = A Z /*P = A Colocara las filas juntas, y todas las columnas de la tabla de X con valores null cuando no coincida*/
+k = ρ A (X) /*Sirve para renombrar una relación, en este caso, renombra a la tabla X para que se pase a llamar tabla A*/
+l = ρ A←P (X) /*Renombra un atributo, en este caso el atributo P de la tabla X pasa a llamarte A*/

@@ -1,0 +1,23 @@
+Algebra Relacional
+a = (R) ÷ (S) /*El unico que cumple la condicion de la columna M tabla R es el A, ya que este posee en su correspondiente columna O un X, Y y un Z*/
+
+Editor de grupo
+group: grupoEjercicio7
+
+R = {
+O:string, M:string
+X, A 
+Y, B
+Z, A
+X, B
+Y, C
+Y, A
+M, A
+}
+
+S = {
+O:string
+X
+Y
+Z
+}

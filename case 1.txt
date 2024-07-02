@@ -1,0 +1,57 @@
+ Nom, Edad, Zona (PERS) /*Proyección: Nombre, edad y zona de todas las personas.*/
+π Zona (PERS) /*Proyección: Zonas donde viven las personas.*/
+π Zona (CLUB) /*Proyección: Zonas donde hay clubes.*/
+πZona(PERS)∪πZona(CLUB) /*Proyección: Todas las zonas.*/
+π Nomc(σ Zona = 'Capital' (CLUB) ∪ σ Zona = 'Desamparados'(CLUB) ∪ σ Zona = 'Rivadavia' (CLUB)) /*Obtener un listado que incluya el nombre de los clubes que están ubicados en Capital, los que están en Desamparados y los que están en Rivadavia (deben incluirse f las tres zonas).*/
+π Nomc (σ Zona = 'Capital' ∨ Zona = 'Rivadavia' ∨ Zona = 'Desamparados'(CLUB))
+
+
+π PERS.Nom, PERS.Cuil, PERS.Edad((PERS) ⨝ (PRAC))/* Nombre, Cuil y edad de las personas que practican deportes.*/
+
+π PRAC.Cuil(σ DEPO.Nomd = 'Tenis'(PRAC ⨝ DEPO))/*Cuil de las personas que practican tenis */
+
+π CLUB.Nomc (σ DEPO.Nomd = 'Fútbol' (PRAC ⨝ DEPO ⨝ CLUB))/*Nombre de los clubes donde se practica fútbol.*/
+π Cuil, Nom, Nomc, Nomd (PRAC ⨝ PERS ⨝ DEPO ⨝ PRAC.Codc = CLUB.Codc CLUB)
+/*Para todas las personas que practican deportes: cuil y nombre de la persona, nombre del deporte y el nombre del club correspondiente, Preguntar en consulta*/ 
+
+π Cuil, Nom σ Codd = 'D01' (PERS⨝PRAC) ∩ π Cuil, Nom σ Codd = 'D22' (PERS⨝PRAC) ∩ π Cuil, Nom σ Codd = 'D10' (PERS⨝PRAC)
+/*Cuil y nombre de las personas que practican (simultáneamente) los deportes D01, D22 y D10 (códigos)*/
+
+π Nom, Cuil (PERS⨝(π Cuil(PERS)∩ π Cuil(PRAC ⨝ (σ Nomc!='Ausonia'(CLUB)))))
+/*Cuit y nombre de las personas que no practican deportes en Ausonia.*/
+π PERS.Nom, PERS.Cuil (((PRAC ⨝ (σ Nomc!='Ausonia'(CLUB)) join PRAC.Cuil = PERS.Cuil PERS)))
+/*Cuit y nombre de las personas que no practican deportes en Ausonia.*/
+
+
+π PRAC.Cuil (σ CLUB.Nomc = 'Ausonia' or CLUB.Nomc = 'UVT' (PRAC join CLUB))
+/*Cuil de las personas que practican deportes en Ausonia o bien practican en la UVT*/
+
+π Codd σ PERS.Sexo='M' (PERS⨝PRAC)
+/*Código de los deportes que son practicados solamente por hombres.*/
+PERS
+π Cuil,Nom,Dir σ Cuil != 1204984252 (PERS join (π Zona σ Cuil=1204984252 PERS))
+/*Cuil, nombre y dirección de las personas que viven en la misma zona que Juan Pérez, Cuil 1-20.498.425-2.*/
+
+π Cuil,Nom (σ Edad  > π Edad (σ Cuil=7184984253 PERS) PERS)
+/*Cuil y nombre de las personas mayores que Ana García (CUIL: 7- 18.498.425- 3).Ver con la profe*/
+
+π Cuil,Nom (PERS⨝PRAC⨝PERS.Zona=CLUB.Zona CLUB)
+/*Cuil y nombre de las personas que practican en clubes que están ubicados en la misma zona en la que ellos viven*/
+
+π Nom,Nomd(PERS⟕(PRAC⨝DEPO))
+/*Nombre de todas las personas junto al nombre del deporte que practica. Se deben incluir todas las personas registradas más allá que no estén practicando algún deporte.*/
+
+(pi CLUB.Codc, PRAC.Codd (CLUB join PRAC)) / (pi Codd (DEPO))
+/*Nombre de los deportes practicados en todos los clubes.*/
+
+pi CLUB.Codc, PRAC.Codd (CLUB join PRAC) / pi DEPO.Codd (σ DEPO.Clase = 'Balón' (DEPO) join PRAC)
+/*Clubes (Codc) en los que se practican todos los deportes de balón (clase).*/
+
+
+pi PRAC.Cuil, PRAC.Codd (PRAC join PERS) / pi Codd DEPO
+
+/*Personas (todos sus datos personales) que practican todos los deportes*/
+
+
+pi Nom, PRAC.Codd(PERS join PRAC) / pi PRAC.Codd (σ Nomc = 'Banco Hispano' CLUB join PRAC)
+/*Nombre de las personas que practican todos los deportes que se practican en el Banco Hispano.*/
